@@ -1,19 +1,16 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:project/injector.dart';
-import 'package:project/movie/providers/movie_get_detail_provider.dart';
-import 'package:project/movie/providers/movie_get_videos_provider.dart';
+import 'package:project/tvshows/providers/tv_shows_get_detail_provider.dart';
+import 'package:project/tvshows/providers/tv_shows_get_videos_provider.dart';
 import 'package:project/widget/image_widget.dart';
-import 'package:project/widget/item_movie_widget.dart';
+import 'package:project/widget/item_tv_shows_widget.dart';
 import 'package:project/widget/webview_widget.dart';
 import 'package:project/widget/youtube_player_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class MovieDetailPage extends StatelessWidget {
-  const MovieDetailPage({super.key, required this.id});
+class TvShowsDetailPage extends StatelessWidget {
+  const TvShowsDetailPage({super.key, required this.id});
 
   final int id;
 
@@ -22,18 +19,18 @@ class MovieDetailPage extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => sl<MovieGetDetailProvider>()..getDetail(context, id: id),
+          create: (_) => sl<TvShowsGetDetailProvider>()..getDetail(context, id: id),
         ),
         ChangeNotifierProvider(
           create: (_) =>
-              sl<MovieGetVideosProvider>()..getVideos(context, id: id),
+              sl<TvShowsGetVideosProvider>()..getVideos(context, id: id),
         ),
       ],
       builder:(_,__)=> Scaffold(
         body: CustomScrollView(
           slivers: [
             _WidgetAppBar(context),
-            Consumer<MovieGetVideosProvider>(
+            Consumer<TvShowsGetVideosProvider>(
               builder: (_, provider, __) {
                 final videos = provider.videos;
                 if (videos != null) {
@@ -41,12 +38,17 @@ class MovieDetailPage extends StatelessWidget {
                     child: _Content(
                       title: 'Trailer',
                       padding: 0,
-                      body: SizedBox(
+                      body: 
+                      videos.results.isEmpty
+                      ? Center(
+                          child: Text('No videos available'),
+                        )
+                      : SizedBox(
                         height: 160,
                         child: ListView.separated(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (_, index) {
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (_, index) {
                             final vidio = videos.results[index];
                             return Stack(
                               children: [
@@ -54,7 +56,7 @@ class MovieDetailPage extends StatelessWidget {
                                   radius: 12,
                                   type: TypeSrcImg.external,
                                   imageSrc: YoutubePlayer.getThumbnail(
-                                    videoId: vidio.key,
+                                  videoId: vidio.key,
                                   ),
                                 ),
                                 Positioned.fill(
@@ -145,11 +147,11 @@ class _WidgetAppBar extends SliverAppBar {
 
   @override
   List<Widget>? get actions => [
-        Consumer<MovieGetDetailProvider>(
+        Consumer<TvShowsGetDetailProvider>(
           builder: (_, provider, __) {
-            final movie = provider.movie;
+            final tvShows = provider.tvShows;
 
-            if (movie != null) {
+            if (tvShows != null) {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: CircleAvatar(
@@ -161,8 +163,8 @@ class _WidgetAppBar extends SliverAppBar {
                         context,
                         MaterialPageRoute(
                           builder: (_) => WebViewWidget(
-                            title: movie.title,
-                            url: movie.homepage,
+                            title: tvShows.name,
+                            url: tvShows.homepage,
                           ),
                         ),
                       );
@@ -182,13 +184,13 @@ class _WidgetAppBar extends SliverAppBar {
   double? get expandedHeight => 300;
 
   @override
-  Widget? get flexibleSpace => Consumer<MovieGetDetailProvider>(
+  Widget? get flexibleSpace => Consumer<TvShowsGetDetailProvider>(
         builder: (_, provider, __) {
-          final movie = provider.movie;
+          final tvShows = provider.tvShows;
 
-          if (movie != null) {
-            return ItemMovieWidget(
-              movieDetail: movie,
+          if (tvShows != null) {
+            return ItemTvShowsWidget(
+              tvShowsDetail: tvShows,
               heightBackdrop: double.infinity,
               widthBackdrop: double.infinity,
               heightPoster: 160.0,
@@ -262,43 +264,66 @@ class _WidgetSummary extends SliverToBoxAdapter {
       ]);
 
   @override
-  Widget? get child => Consumer<MovieGetDetailProvider>(
+  Widget? get child => Consumer<TvShowsGetDetailProvider>(
         builder: (_, provider, __) {
-          final movie = provider.movie;
+          final tvShows = provider.tvShows;
 
-          if (movie != null) {
+          if (tvShows != null) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _Content(
-                  title: 'Release Date',
-                  body: Row(
-                    children: [
-                      const Icon(
-                        Icons.calendar_month_rounded,
-                        size: 32.0,
+                Row(
+                  children: [
+                    _Content(
+                      title: 'First Air Date',
+                      body: Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_month_rounded,
+                            size: 32.0,
+                          ),
+                          const SizedBox(width: 6.0),
+                          Text(
+                            tvShows.firstAirDate.toString().split(' ').first,
+                            style: const TextStyle(
+                              fontSize: 16.0,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 6.0),
-                      Text(
-                        movie.releaseDate.toString().split(' ').first,
-                        style: const TextStyle(
-                          fontSize: 16.0,
-                          fontStyle: FontStyle.italic,
+                    ),
+                    _Content(
+                    title: 'Last Air Date',
+                    body: Row(
+                      children: [
+                        const Icon(
+                          Icons.calendar_month_rounded,
+                          size: 32.0,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 6.0),
+                        Text(
+                          tvShows.lastAirDate.toString().split(' ').first,
+                          style: const TextStyle(
+                            fontSize: 16.0,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  ],
                 ),
                 _Content(
                   title: 'Genres',
                   body: Wrap(
                     spacing: 6,
-                    children: movie.genres
+                    children: tvShows.genres
                         .map((genre) => Chip(label: Text(genre.name)))
                         .toList(),
                   ),
                 ),
-                _Content(title: 'Overview', body: Text(movie.overview)),
+                _Content(title: 'Overview', body: Text(tvShows.overview)),
                 _Content(
                   title: 'Summary',
                   body: Table(
@@ -314,27 +339,27 @@ class _WidgetSummary extends SliverToBoxAdapter {
                     children: [
                       _tableContent(
                         title: "Adult",
-                        content: movie.adult ? "Yes" : "No",
+                        content: tvShows.adult ? "Yes" : "No",
                       ),
                       _tableContent(
                         title: "Popularity",
-                        content: '${movie.popularity}',
+                        content: '${tvShows.popularity}',
                       ),
                       _tableContent(
                         title: "Status",
-                        content: movie.status,
+                        content: tvShows.status,
                       ),
                       _tableContent(
-                        title: "Budget",
-                        content: "${movie.budget}",
+                        title: "Number of Episodes",
+                        content: "${tvShows.numberOfEpisodes}",
                       ),
                       _tableContent(
-                        title: "Revenue",
-                        content: "${movie.revenue}",
+                        title: "Number of Seasons",
+                        content: "${tvShows.numberOfSeasons}",
                       ),
                       _tableContent(
                         title: "Tagline",
-                        content: movie.tagline,
+                        content: tvShows.tagline,
                       ),
                     ],
                   ),

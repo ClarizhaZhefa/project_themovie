@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:project/movie/pages/movie_detail_page.dart';
-import 'package:project/movie/providers/movie_get_top_rated_provider.dart';
+import 'package:project/tvshows/pages/tv_shows_detail_page.dart';
+import 'package:project/tvshows/providers/tv_shows_top_rated_provider.dart';
 import 'package:project/widget/image_widget.dart';
 import 'package:provider/provider.dart';
 
-class MovieTopRatedComponent extends StatefulWidget {
-  const MovieTopRatedComponent({super.key});
+class TvShowsTopRatedComponent extends StatefulWidget {
+  const TvShowsTopRatedComponent({super.key});
 
   @override
-  State<MovieTopRatedComponent> createState() => _MovieTopRatedComponentState();
+  State<TvShowsTopRatedComponent> createState() => _TvShowsTopRatedComponentState();
 }
 
-class _MovieTopRatedComponentState extends State<MovieTopRatedComponent> {
+class _TvShowsTopRatedComponentState extends State<TvShowsTopRatedComponent> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<MovieGetTopRatedProvider>().getTopRated(context);
+      context.read<TvShowsGetTopRatedProvider>().getTopRated(context);
     });
     super.initState();
   }
@@ -25,7 +25,7 @@ class _MovieTopRatedComponentState extends State<MovieTopRatedComponent> {
     return SliverToBoxAdapter(
       child: SizedBox(
         height: 200,
-        child: Consumer<MovieGetTopRatedProvider>(
+        child: Consumer<TvShowsGetTopRatedProvider>(
           builder: (_, provider, __) {
             if (provider.isLoading) {
               return Container(
@@ -36,20 +36,20 @@ class _MovieTopRatedComponentState extends State<MovieTopRatedComponent> {
               );
             }
 
-            if (provider.movies.isNotEmpty) {
+            if (provider.tvShows.isNotEmpty) {
               return ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (_, index) {
                   return ImageNetworkWidget(
-                    imageSrc: provider.movies[index].posterPath,
+                    imageSrc: provider.tvShows[index].posterPath,
                     height: 200,
                     width: 120,
                     radius: 12.0,
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (_) {
-                          return MovieDetailPage(id: provider.movies[index].id);
+                          return TvShowsDetailPage(id: provider.tvShows[index].id);
                         },
                       ));
                     },
@@ -58,7 +58,7 @@ class _MovieTopRatedComponentState extends State<MovieTopRatedComponent> {
                 separatorBuilder: (_, __) => const SizedBox(
                   width: 8.0,
                 ),
-                itemCount: provider.movies.length,
+                itemCount: provider.tvShows.length,
               );
             }
 
@@ -69,7 +69,7 @@ class _MovieTopRatedComponentState extends State<MovieTopRatedComponent> {
                 borderRadius: BorderRadius.circular(12.0),
               ),
               child: const Center(
-                child: Text('Not found top rated movies'),
+                child: Text('Not found top rated tv shows'),
               ),
             );
           },

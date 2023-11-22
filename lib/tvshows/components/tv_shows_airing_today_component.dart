@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:project/movie/pages/movie_detail_page.dart';
-import 'package:project/movie/providers/movie_get_now_playing_discover.dart';
+import 'package:project/tvshows/pages/tv_shows_detail_page.dart';
+import 'package:project/tvshows/providers/tv_shows_get_airing_today_provider.dart';
 import 'package:project/widget/image_widget.dart';
 import 'package:provider/provider.dart';
 
-class MovieNowPlayingComponent extends StatefulWidget {
-  const MovieNowPlayingComponent({super.key});
+class TvShowsAiringTodayComponent extends StatefulWidget {
+  const TvShowsAiringTodayComponent({super.key});
 
   @override
-  State<MovieNowPlayingComponent> createState() =>
-      _MovieNowPlayingComponentState();
+  State<TvShowsAiringTodayComponent> createState() =>
+      _TvShowsAiringTodayComponentState();
 }
 
-class _MovieNowPlayingComponentState extends State<MovieNowPlayingComponent> {
+class _TvShowsAiringTodayComponentState extends State<TvShowsAiringTodayComponent> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<MovieGetNowPlayingProvider>().getNowPlaying(context);
+      context.read<TvShowsGetAiringTodayProvider>().getAiringToday(context);
     });
     super.initState();
   }
@@ -26,7 +26,7 @@ class _MovieNowPlayingComponentState extends State<MovieNowPlayingComponent> {
     return SliverToBoxAdapter(
       child: SizedBox(
         height: 200,
-        child: Consumer<MovieGetNowPlayingProvider>(
+        child: Consumer<TvShowsGetAiringTodayProvider>(
           builder: (_, provider, __) {
             if (provider.isLoading) {
               return Container(
@@ -37,12 +37,12 @@ class _MovieNowPlayingComponentState extends State<MovieNowPlayingComponent> {
               );
             }
 
-            if (provider.movies.isNotEmpty) {
+            if (provider.tvShows.isNotEmpty) {
               return ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (_, index) {
-                  final movie = provider.movies[index];
+                  final tvShows = provider.tvShows[index];
 
                   return Stack(
                     children: [
@@ -65,7 +65,7 @@ class _MovieNowPlayingComponentState extends State<MovieNowPlayingComponent> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ImageNetworkWidget(
-                              imageSrc: movie.posterPath,
+                              imageSrc: tvShows.posterPath,
                               height: 200,
                               width: 120,
                               radius: 12.0,
@@ -77,7 +77,7 @@ class _MovieNowPlayingComponentState extends State<MovieNowPlayingComponent> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    movie.title,
+                                    tvShows.name,
                                     style: const TextStyle(
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold,
@@ -90,13 +90,13 @@ class _MovieNowPlayingComponentState extends State<MovieNowPlayingComponent> {
                                         color: Colors.amber,
                                       ),
                                       Text(
-                                        '${movie.voteAverage} (${movie.voteCount})',
+                                        '${tvShows.voteAverage} (${tvShows.voteCount})',
                                         style: const TextStyle(fontSize: 16.0),
                                       ),
                                     ],
                                   ),
                                   Text(
-                                    movie.overview,
+                                    tvShows.overview,
                                     maxLines: 3,
                                     style: const TextStyle(
                                       fontStyle: FontStyle.italic,
@@ -116,7 +116,7 @@ class _MovieNowPlayingComponentState extends State<MovieNowPlayingComponent> {
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(
                                 builder: (_) {
-                                  return MovieDetailPage(id: movie.id);
+                                  return TvShowsDetailPage(id: tvShows.id);
                                 },
                               ));
                             },
@@ -129,7 +129,7 @@ class _MovieNowPlayingComponentState extends State<MovieNowPlayingComponent> {
                 separatorBuilder: (_, __) => const SizedBox(
                   width: 8.0,
                 ),
-                itemCount: provider.movies.length,
+                itemCount: provider.tvShows.length,
               );
             }
 
@@ -140,7 +140,7 @@ class _MovieNowPlayingComponentState extends State<MovieNowPlayingComponent> {
                 borderRadius: BorderRadius.circular(12.0),
               ),
               child: const Center(
-                child: Text('Not found now playing movies'),
+                child: Text('Not found airing today tv shows'),
               ),
             );
           },

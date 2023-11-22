@@ -1,31 +1,26 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:project/app_constants.dart';
-import 'package:project/movie/components/movie_discover_component.dart';
-import 'package:project/movie/components/movie_get_now_playing_component.dart';
-import 'package:project/movie/components/movie_top_rated_component.dart';
-import 'package:project/movie/model/movie_model.dart';
-import 'package:project/movie/pages/movie_pagination_page.dart';
+import 'package:project/movie/pages/movie_page.dart';
 import 'package:project/movie/pages/movie_search_page.dart';
-import 'package:project/movie/providers/movie_get_discover_provider.dart';
-import 'package:project/movie/providers/movie_get_top_rated_provider.dart';
-import 'package:project/tvshows/pages/tv_shows_page.dart';
-import 'package:project/widget/image_widget.dart';
-import 'package:project/widget/item_movie_widget.dart';
+import 'package:project/tvshows/components/tv_shows_airing_today_component.dart';
+import 'package:project/tvshows/components/tv_shows_discover_component.dart';
+import 'package:project/tvshows/components/tv_shows_top_rated_component.dart';
+import 'package:project/tvshows/pages/tv_shows_pagination_page.dart';
+import 'package:project/tvshows/pages/tv_shows_search_page.dart';
+import 'package:project/tvshows/providers/tv_shows_get_discover_provider.dart';
 import 'package:provider/provider.dart';
 
-class MoviePage extends StatelessWidget {
-  const MoviePage({super.key});
+class TvShowsPage extends StatelessWidget {
+  const TvShowsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
-        index: 0,
+        index: 1,
         height: 63,
         backgroundColor: Colors.white,
         color: Color.fromARGB(70, 0, 0, 0),
@@ -77,7 +72,7 @@ class MoviePage extends StatelessWidget {
               IconButton(
                 onPressed: () => showSearch(
                   context: context, 
-                  delegate: MovieSearchPage(),
+                  delegate: TvShowsSearchPage(),
                 ), 
                 icon: const Icon(Icons.search))
             ],
@@ -87,48 +82,48 @@ class MoviePage extends StatelessWidget {
             backgroundColor: Colors.white,
             foregroundColor: Colors.black,
           ),
-          _WidgetTitle(
-            title: 'Discover Movies',
+           _WidgetTitle(
+            title: 'Discover TV Shows',
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const MoviePaginationPage(
-                    type: TypeMovie.discover,
+                  builder: (_) => const TvShowsPaginationPage(
+                    type: TypeTvShows.discover,
                   ),
                 ),
               );
             },
           ),
-          const MovieDiscoverComponent(),
+          const TvShowsDiscoverComponent(),
           _WidgetTitle(
-            title: 'Top Rated Movies',
+            title: 'Top Rated TV Shows',
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const MoviePaginationPage(
-                    type: TypeMovie.topRated,
+                  builder: (_) => const TvShowsPaginationPage(
+                    type: TypeTvShows.topRated,
                   ),
                 ),
               );
             },
           ),
-          const MovieTopRatedComponent(),
+          const TvShowsTopRatedComponent(),
           _WidgetTitle(
-            title: 'Now Playing Movies',
+            title: 'Airing Today TV Shows',
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const MoviePaginationPage(
-                    type: TypeMovie.nowPlaying,
+                  builder: (_) => const TvShowsPaginationPage(
+                    type: TypeTvShows.airingToday,
                   ),
                 ),
               );
             },
           ),
-          const MovieNowPlayingComponent(),
+          const TvShowsAiringTodayComponent(),
           const SliverToBoxAdapter(
             child: SizedBox(height: 16),
           ),

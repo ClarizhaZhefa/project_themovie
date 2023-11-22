@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:project/movie/model/movie_model.dart';
+import 'package:project/movie/pages/movie_detail_page.dart';
 import 'package:project/movie/providers/movie_get_discover_provider.dart';
 import 'package:project/movie/providers/movie_get_now_playing_discover.dart';
 import 'package:project/movie/providers/movie_get_top_rated_provider.dart';
@@ -83,11 +83,11 @@ class _MoviePaginationPageState extends State<MoviePaginationPage> {
             heightPoster: 140,
             widthPoster: 80,
             onTap: () {
-              // Navigator.push(context, MaterialPageRoute(
-              //   builder: (_) {
-              //     return MovieDetailPage(id: item.id);
-              //   },
-              // ));
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) {
+                  return MovieDetailPage(id: item.id);
+                },
+              ));
             },
           ),
         ),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:project/movie/model/movie_detail_model.dart';
-import 'package:project/movie/model/movie_model.dart';
+import 'package:project/tvshows/model/tv_shows_detail_model.dart';
+import 'package:project/tvshows/model/tv_shows_model.dart';
 import 'package:project/widget/image_widget.dart';
 
-class ItemMovieWidget extends Container {
-  final MovieModel? movie;
-  final MovieDetailModel? movieDetail;
+class ItemTvShowsWidget extends Container {
+  final TvShowsModel? tvShows;
+  final TvShowsDetailModel? tvShowsDetail;
   final double heightBackdrop;
   final double widthBackdrop;
   final double heightPoster;
@@ -13,14 +13,14 @@ class ItemMovieWidget extends Container {
   final double radius;
   final void Function()? onTap;
 
-  ItemMovieWidget({
+  ItemTvShowsWidget({
     required this.heightBackdrop,
     required this.widthBackdrop,
     required this.heightPoster,
     required this.widthPoster,
     this.radius = 12,
-    this.movie,
-    this.movieDetail,
+    this.tvShows,
+    this.tvShowsDetail,
     this.onTap,
     super.key,
   });
@@ -38,7 +38,7 @@ class ItemMovieWidget extends Container {
         children: [
           ImageNetworkWidget(
             imageSrc:
-                '${movieDetail != null ? movieDetail!.backdropPath : movie!.backdropPath}',
+                '${tvShowsDetail != null ? tvShowsDetail!.backdropPath : tvShows!.backdropPath}',
             height: heightBackdrop,
             width: widthBackdrop,
           ),
@@ -65,14 +65,14 @@ class ItemMovieWidget extends Container {
               children: [
                 ImageNetworkWidget(
                   imageSrc:
-                      '${movieDetail != null ? movieDetail!.posterPath : movie!.posterPath}',
+                      '${tvShowsDetail != null ? tvShowsDetail!.posterPath : tvShows!.posterPath}',
                   height: heightPoster,
                   width: widthPoster,
                   radius: 12,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  movieDetail != null ? movieDetail!.title : movie!.title,
+                  tvShowsDetail != null ? tvShowsDetail!.name : tvShows!.name,
                   style: const TextStyle(
                     fontSize: 16.0,
                     color: Colors.white,
@@ -87,7 +87,7 @@ class ItemMovieWidget extends Container {
                       color: Colors.amber,
                     ),
                     Text(
-                      '${movieDetail != null ? movieDetail!.voteAverage : movie!.voteAverage} (${movieDetail != null ? movieDetail!.voteCount : movie!.voteCount})',
+                      '${tvShowsDetail != null ? tvShowsDetail!.voteAverage : tvShows!.voteAverage} (${tvShowsDetail != null ? tvShowsDetail!.voteCount : tvShows!.voteCount})',
                       style: const TextStyle(
                         fontSize: 16.0,
                         color: Colors.white,

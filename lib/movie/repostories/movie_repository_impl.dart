@@ -2,12 +2,15 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:project/movie/model/movie_detail_model.dart';
 import 'package:project/movie/model/movie_model.dart';
+import 'package:project/movie/model/movie_video_model.dart';
 import 'package:project/movie/repostories/movie_repository.dart';
 
 class MovieRepositoryImpl implements MovieRepository {
   final Dio _dio;
 
   MovieRepositoryImpl(this._dio);
+
+  
 
   @override
   Future<Either<String, MovieResponseModel>> getDiscover({int page = 1}) async {
@@ -54,7 +57,7 @@ class MovieRepositoryImpl implements MovieRepository {
       return const Left('Another error on get top rated movies');
     }
   }
-  
+
   @override
   Future<Either<String, MovieResponseModel>> getNowPlaying(
       {int page = 1}) async {
@@ -80,8 +83,7 @@ class MovieRepositoryImpl implements MovieRepository {
   }
 
   @override
-  Future<Either<String, MovieDetailModel>> getDetail(
-    {required int id}) async {
+  Future<Either<String, MovieDetailModel>> getDetail({required int id}) async {
     try {
       final result = await _dio.get(
         '/movie/$id',
@@ -101,5 +103,51 @@ class MovieRepositoryImpl implements MovieRepository {
       return const Left('Another error on get movie detail');
     }
   }
-  
+
+  @override
+  Future<Either<String, MovieVideosModel>> getVideos({required int id}) async {
+    try {
+      final result = await _dio.get(
+        '/movie/$id/videos',
+      );
+
+      if (result.statusCode == 200 && result.data != null) {
+        final model = MovieVideosModel.fromMap(result.data);
+        return Right(model);
+      }
+
+      return const Left('Error get movie videos');
+    } on DioError catch (e) {
+      if (e.response != null) {
+        return Left(e.response.toString());
+      }
+
+      return const Left('Another error on get movie videos');
+    }
+  }
+
+  @override
+  Future<Either<String, MovieResponseModel>> search({
+    required String query,
+  }) async {
+    try {
+      final result = await _dio.get(
+        '/search/movie',
+        queryParameters: {"query": query},
+      );
+
+      if (result.statusCode == 200 && result.data != null) {
+        final model = MovieResponseModel.fromMap(result.data);
+        return Right(model);
+      }
+
+      return const Left('Error search movie');
+    } on DioError catch (e) {
+      if (e.response != null) {
+        return Left(e.response.toString());
+      }
+
+      return const Left('Another error on search movie');
+    }
+  }
 }
